@@ -1,14 +1,10 @@
 #include <iostream>
-#include <algorithm>
-#include <omp.h>
 #include <chrono>
+#include <algorithm>
 
-bool foo(std::string s){
-  bool res = false;
-  for(int i = s.length() - 1; i > 0; i--){
-    #pragma omp taskloop reduction(|:res)
+bool foo(std::string s) {
+for(int i = s.length() - 1; i > 0; i--){
     for(int j = 0; j < i-1; j++){
-      
       std::string frst = s.substr(0,j+1);
 
       std::string r1str = frst;
@@ -19,28 +15,27 @@ bool foo(std::string s){
       std::string r2str = srst;
       std::reverse(srst.begin(), srst.end());
 
-      std::string trst = s.substr(i, s.length()-i); 
+      std::string trst = s.substr(i, s.length()-i); // edit 
 
 
 
       std::string r3str = trst;
       std::reverse(trst.begin(), trst.end());
 
+      //std::cout << r1str << " " << r2str << " " << r3str << std::endl;
+
       if((frst == r1str) && 
          (srst == r2str) &&
-         (trst == r3str)){
-           res |= true;
-         }
+         (trst == r3str))
+          return true;
     }
   }
-  return res;
+  return false;
 }
 
 int main(){
   auto nw = std::chrono::system_clock::now();
   std::string str = "plbqrqbhafkaktrbsaaxpxiobebmkkeivlformfspcdtygcmgpbrekkwpgvujyfpysjsqeclwkkmntaahxferzsyxbivyrohptketkabbmzhxdffvdjbbdvpmeygvygsiglucsavhjdoyosysqmiobvcbwatprfyjnxuuihissatgfjmnzwmbhdfwjyxdxelsxsutugmsthjsblgrjtxylzwlifzuhpfvssovovblhwngcimcoxgmiirecxsawfsahwxdkpdctgozzpfdvnbrpsdevqaaxnrczldpcodubfkoevcpbonckkgnjibzxmztoilwqanashooiytjljrwwznjtmkbyhukvcqhmnnibypxcqevoggsanfgybnxujpjsecynkoguinzypssnsnmbkurkncqhgqiuglqvtwidvbprhkgdvvxgulzlacjmqtbpapdrvanifjuautebqqpfxsetvciazpdrxbtgscvczfnydhpydcbbrmlhjszigimcjjevrxqduaawvoarusqhwsjtpvygdfxyhyytwjyqyezzsrdwwbcrytgiwqqomjsusmhzjfqnihccufgcohdlxcwtitxbevzfuhytrbtqfcpedmfvuhvxsrqqxkrmnnxmyuvkngm";
-  #pragma omp parallel
-  #pragma omp single
   std::cout << foo(str) << std::endl;
   auto en = std::chrono::system_clock::now();
   auto duration = std::chrono::duration_cast<std::chrono::microseconds>(en-nw);
